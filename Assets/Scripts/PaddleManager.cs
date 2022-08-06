@@ -6,6 +6,7 @@ public class PaddleManager : MonoBehaviour
 {
     public static PaddleManager instance;
     bool paddleFire = false;
+    bool paddleMagnet = false;
     private void Awake()
     {
         instance = this;
@@ -49,13 +50,26 @@ public class PaddleManager : MonoBehaviour
         paddleFire = true;
     }
 
+    public void SetPaddleNotFire()
+    {
+        paddleFire = false;
+    }
+
     public bool GetPaddleFire()
     {
         return paddleFire;
     }
 
-    public void SetPaddleNotFire()
+    public void SetPaddleMagnet()
     {
-        paddleFire = false;
+        paddleMagnet = true;
+    }
+    public void SetPaddleNotMagnet()
+    {
+        paddleMagnet = false;
+    }
+    public bool GetPaddleMagnet()
+    {
+        return paddleMagnet;
     }
 }

@@ -32,7 +32,7 @@ public class ItemEffect : MonoBehaviour
 
     void MagnetEffect()
     {
-
+        PaddleManager.instance.SetPaddleMagnet();
     }
 
     void Die()

@@ -12,6 +12,8 @@ public class BallManager : MonoBehaviour
     bool alive = true;
     public float timeToOnFireByItem = 15f;
     bool onFire = false;
+    public float timeToOnMagnetByItem = 10f;
+    bool onMagnet = false;
     private void Awake()
     {
         instance = this;
@@ -82,12 +84,61 @@ public class BallManager : MonoBehaviour
     /// </summary>
     void FireBallAfterDie()
     {
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        if (!alive && rb.velocity.magnitude == 0 && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
             alive = true;
             rb.velocity = new Vector2(Random.Range(-1f, 1f), 5);
         }
     }
+
+    // If collition was enter add some error rotation to the ball
+    // and if paddle collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Paddle")
+        {
+            PaddleManager paddle = GameObject.Find("Paddle").GetComponent<PaddleManager>();
+            if (paddle.GetPaddleFire())
+            {
+                BeFireball();
+                PaddleManager.instance.SetPaddleNotFire();
+            }
+            if (paddle.GetPaddleMagnet())
+            {
+                BeMagnet();
+                PaddleManager.instance.SetPaddleNotMagnet();
+            }
+            // if on magnet state and paddle hit ball, then magnet on
+            if (onMagnet)
+                MagnetOn();
+        }
+        rb.velocity = new Vector2(rb.velocity.x + Random.Range(-0.1f, 0.1f), rb.velocity.y);
+    }
+
+    // Fire ball trigger anything except brick will bound
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item")
+        {
+            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
+            circleCollider.isTrigger = false;
+        }
+        // if onfire ball hit paddle that has magnet, then magnet on
+        if (other.gameObject.tag == "Paddle")
+        {
+            if (onMagnet)
+                MagnetOn();
+        }
+    }
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item" && onFire)
+        {
+            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
+            circleCollider.isTrigger = true;
+        }
+    }
+
 
     /// <summary>
     /// Start a coroutine called Fireball.
@@ -116,36 +167,38 @@ public class BallManager : MonoBehaviour
         GetComponent<SpriteRenderer>().sprite = sprite[0];
     }
 
-    // If collition was enter add some error rotation to the ball
-    // and if paddle collect fire item set ball to fire state
-    private void OnCollisionEnter2D(Collision2D other)
+
+    /// <summary>
+    /// Start a coroutine called Magnetball.
+    /// </summary>
+    public void BeMagnet()
     {
-        if (other.gameObject.tag == "Paddle")
-        {
-            if (GameObject.Find("Paddle").GetComponent<PaddleManager>().GetPaddleFire())
-            {
-                BeFireball();
-                PaddleManager.instance.SetPaddleNotFire();
-            }
-        }
-        rb.velocity = new Vector2(rb.velocity.x + Random.Range(-0.1f, 0.1f), rb.velocity.y);
+        StartCoroutine(Magnetball());
     }
 
-    // Fire ball trigger anything except brick will bound
-    private void OnTriggerEnter2D(Collider2D other)
+    /// <summary>
+    /// "Set onMagnet variable to true and wait 15 seconds, then set the onMagnet variable to false."
+    /// </summary>
+
+    IEnumerator Magnetball()
     {
-        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item")
-        {
-            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
-            circleCollider.isTrigger = false;
-        }
+        onMagnet = true;
+        //wait 15 seconds
+        yield return new WaitForSeconds(timeToOnMagnetByItem);
+        onMagnet = false;
     }
-    private void OnCollisionExit2D(Collision2D other)
+
+    /// <summary>
+    /// The MagnetOn function sets the ball's velocity to zero, and sets the ball's position to the
+    /// paddle's position
+    /// </summary>
+    void MagnetOn()
     {
-        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item" && onFire)
-        {
-            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
-            circleCollider.isTrigger = true;
-        }
+        float startYPosiotion = -3.975f;
+        alive = false;
+        //Set ball speed to 0
+        rb.velocity = Vector2.zero;
+        //set ball on paddle
+        transform.position = new Vector3(paddle.transform.position.x, startYPosiotion, 0);
     }
 }
