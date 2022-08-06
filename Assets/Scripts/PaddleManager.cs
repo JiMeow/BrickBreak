@@ -36,10 +36,11 @@ public class PaddleManager : MonoBehaviour
         {
             transform.position = new Vector3(-8.35f, transform.position.y, transform.position.z);
         }
-        else
+        else if (paddlenewPositionX > -8.35 && paddlenewPositionX < 8.35)
         {
             transform.position = new Vector3(paddlenewPositionX, transform.position.y, transform.position.z);
         }
+
     }
 
     /// <summary>

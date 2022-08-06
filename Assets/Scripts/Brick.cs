@@ -9,6 +9,7 @@ public class Brick : MonoBehaviour
     int durable;
     int index;
     bool containItem;
+    bool isBomb;
     public int hardBrickBreakDurable = 3;
     public int brickBlueScore = 10;
     public int brickGreenScore = 20;
@@ -28,7 +29,9 @@ public class Brick : MonoBehaviour
     /// <param name="isNormal">If true, the brick will be a normal brick.</param>
     /// <param name="isHardBrick">If true, the brick will be a hard brick.</param>
     /// <param name="isUndestroyable">If true, the brick will be undestroyable.</param>
-    public void Set(int index, int row, bool isNormal = false, bool isHardBrick = false, bool isUndestroyable = false, bool isContainitem = false)
+    /// <param name="isContainitem">If true, the brick will be a special brick contain item.</param>
+    /// <param name="isBombBrick">If true, the brick will be a bomb.</param>
+    public void Set(int index, int row, bool isNormal = false, bool isHardBrick = false, bool isUndestroyable = false, bool isContainitem = false, bool isBombBrick = false)
     {
         if (index != -1)
             this.index = index;
@@ -68,10 +71,15 @@ public class Brick : MonoBehaviour
         {
             containItem = true;
         }
+        if (isBombBrick)
+        {
+            GetComponent<SpriteRenderer>().sprite = sprite[5];
+            score = 100;
+            isBomb = true;
+        }
     }
 
     //when ball hit brick decrease durability if durability is 0 destroy brick
-    //if brick contain item, then create item
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "Ball")
@@ -81,12 +89,7 @@ public class Brick : MonoBehaviour
                 durable--;
                 if (durable == 0)
                 {
-                    GameManager.instance.AddScore(score);
-                    if (containItem)
-                    {
-                        SpawnItem();
-                    }
-                    Destroy(gameObject);
+                    DestroyBrick();
                 }
             }
         }
@@ -97,13 +100,26 @@ public class Brick : MonoBehaviour
     {
         if (other.gameObject.tag == "Ball")
         {
-            GameManager.instance.AddScore(score);
-            if (containItem)
-            {
-                SpawnItem();
-            }
-            Destroy(gameObject);
+            DestroyBrick();
         }
+    }
+
+    /// <summary>
+    /// This function is used to destroy the game object if the brick contains an item spawn item,
+    /// if brick is a bomb then activate bomb
+    /// </summary>
+    public void DestroyBrick()
+    {
+        GameManager.instance.AddScore(score);
+        if (containItem)
+        {
+            SpawnItem();
+        }
+        if (isBomb)
+        {
+            BrickManager.instance.DestroyByBombBrick(index);
+        }
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -126,6 +142,11 @@ public class Brick : MonoBehaviour
     public int GetDurable()
     {
         return durable;
+    }
+
+    public bool GetIsBomb()
+    {
+        return isBomb;
     }
 
 }

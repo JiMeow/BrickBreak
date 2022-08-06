@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class BrickManager : MonoBehaviour
 {
+    public static BrickManager instance;
     [SerializeField]
     private GameObject brick;
 
     GameObject[] allInstantBricks;
-
+    private void Awake()
+    {
+        instance = this;
+    }
     void Start()
     {
         allInstantBricks = new GameObject[70];
@@ -115,6 +119,169 @@ public class BrickManager : MonoBehaviour
         for (int i = 0; i < 7; i++)
         {
             temp[i].GetComponent<Brick>().Set(-1, 0, isContainitem: true);
+        }
+
+        //Spawn 4 bomb brick by random and set index that can't be use in dictionary (can't be unbreakable box)
+        //then set brick to Bombbrick
+        Dictionary<int, bool> indexBombCanUse = new Dictionary<int, bool>();
+        for (int i = 0; i < 4; i++)
+        {
+            int indexChoose = Random.Range(0, 70);
+            if (indexBombCanUse.ContainsKey(indexChoose) || temp[indexChoose].GetComponent<Brick>().GetDurable() == -1)
+            {
+                i--;
+                continue;
+            }
+            else
+            {
+                SetBombBrickCantUseIndex(indexChoose, indexBombCanUse);
+                temp[indexChoose].GetComponent<Brick>().Set(-1, 0, isBombBrick: true);
+            }
+        }
+
+        //Sort all brick by index
+        for (int i = 0; i < 70; i++)
+        {
+            for (int j = i + 1; j < 70; j++)
+            {
+                if (temp[i].GetComponent<Brick>().GetIndex() > temp[j].GetComponent<Brick>().GetIndex())
+                {
+                    GameObject swap = temp[i];
+                    temp[i] = temp[j];
+                    temp[j] = swap;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// It takes an index and a dictionary of indices and sets the value of the dictionary at the index
+    /// to true
+    /// </summary>
+    /// <param name="index">the index of the brick that is being destroyed</param>
+    /// <param name="indexBombCanUse">a dictionary that stores the index on right(\) and on left(/) of the brick that can't be used
+    /// to place a bomb</param>
+    void SetBombBrickCantUseIndex(int index, Dictionary<int, bool> indexBombCanUse)
+    {
+        int tempindex = index;
+        while (tempindex >= 0)
+        {
+            if (!indexBombCanUse.ContainsKey(tempindex))
+            {
+                indexBombCanUse.Add(tempindex, true);
+            }
+            if (tempindex % 10 == 0)
+                break;
+            tempindex -= 11;
+        }
+        tempindex = index;
+        while (tempindex >= 0)
+        {
+            if (!indexBombCanUse.ContainsKey(tempindex))
+            {
+                indexBombCanUse.Add(tempindex, true);
+            }
+            if (tempindex % 10 == 9)
+                break;
+            tempindex -= 9;
+        }
+        tempindex = index;
+        while (tempindex < 70)
+        {
+            if (!indexBombCanUse.ContainsKey(tempindex))
+            {
+                indexBombCanUse.Add(tempindex, true);
+            }
+            if (tempindex % 10 == 9)
+                break;
+            tempindex += 11;
+        }
+        tempindex = index;
+        while (tempindex < 70)
+        {
+            if (!indexBombCanUse.ContainsKey(tempindex))
+            {
+                indexBombCanUse.Add(tempindex, true);
+            }
+            if (tempindex % 10 == 0)
+                break;
+            tempindex += 9;
+        }
+    }
+
+    /// <summary>
+    /// It destroys all the bricks in a diagonal line,(left or right) depending on 
+    /// the direction
+    /// </summary>
+    /// <param name="index">the index of the brick that was hit by the ball</param>
+    public void DestroyByBombBrick(int index)
+    {
+        int tempindex = index;
+        bool direction = Random.Range(0, 2) == 0 ? true : false;
+
+        if (direction)
+        {
+            while (true)
+            {
+                // hanedle index out of range
+                if (tempindex % 10 == 0)
+                    break;
+                tempindex -= 11;
+                if (tempindex < 0) break;
+
+                //destroy brick if it not already destroyed
+                if (allInstantBricks[tempindex] != null)
+                {
+                    allInstantBricks[tempindex].GetComponent<Brick>().DestroyBrick();
+                }
+            }
+            tempindex = index;
+            while (true)
+            {
+                // hanedle index out of range
+                if (tempindex % 10 == 9)
+                    break;
+                tempindex += 11;
+                if (tempindex >= 70) break;
+
+                //destroy brick if it not already destroyed
+                if (allInstantBricks[tempindex] != null)
+                {
+                    allInstantBricks[tempindex].GetComponent<Brick>().DestroyBrick();
+                }
+            }
+        }
+        else if (!direction)
+        {
+            while (true)
+            {
+                // hanedle index out of range
+                if (tempindex % 10 == 9)
+                    break;
+                tempindex -= 9;
+                if (tempindex < 0) break;
+
+                //destroy brick if it not already destroyed
+                if (allInstantBricks[tempindex] != null)
+                {
+                    allInstantBricks[tempindex].GetComponent<Brick>().DestroyBrick();
+                }
+            }
+            tempindex = index;
+            while (true)
+            {
+                // hanedle index out of range
+                if (tempindex % 10 == 0)
+                    break;
+                tempindex += 9;
+                if (tempindex >= 70) break;
+
+                //destroy brick if it not already destroyed
+                if (allInstantBricks[tempindex] != null)
+                {
+                    allInstantBricks[tempindex].GetComponent<Brick>().DestroyBrick();
+                }
+            }
         }
     }
 }

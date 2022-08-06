@@ -124,12 +124,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8bb7be43d3ae2b43a3b75df4234cde2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hardBrickBreakDurable: 3
+  brickBlueScore: 10
+  brickGreenScore: 20
+  brickYellowScore: 50
   sprite:
   - {fileID: 21300000, guid: 2669d8b741c6c304785e23c6a94362a3, type: 3}
   - {fileID: 21300000, guid: e30296cd58f98ca469b5748e9ae309ee, type: 3}
   - {fileID: 21300000, guid: 7f3238f7f6ac6734dab7221a6f845671, type: 3}
   - {fileID: 21300000, guid: b72782c434e46814dacc0aff8f07ddb5, type: 3}
   - {fileID: 21300000, guid: 58a5b5a0e8bb4c344a6cb30605e4b469, type: 3}
+  - {fileID: 21300000, guid: a31d967a76699944b8b64256dcef7444, type: 3}
   itemGameObject:
   - {fileID: 7205431502747385034, guid: ac6538346bd4ec240afd4acbd521436f, type: 3}
   - {fileID: 2049321441037599301, guid: 3a3343b45a46b154cb9d26982be38a0e, type: 3}
