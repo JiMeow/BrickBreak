@@ -14,6 +14,8 @@ public class BallManager : MonoBehaviour
     bool onFire = false;
     public float timeToOnMagnetByItem = 10f;
     bool onMagnet = false;
+    Coroutine onFireCoroutine;
+    Coroutine onMagnetCoroutine;
     private void Awake()
     {
         instance = this;
@@ -35,12 +37,12 @@ public class BallManager : MonoBehaviour
     }
 
     /// <summary>
-    /// If the player is alive and the player's velocity magnitude is less than 6, then set the player's velocity magnitude
+    /// If the player is alive and the player's velocity magnitude is not equal to 6, then set the player's velocity magnitude
     /// to 6
     /// </summary>
     void CheckSpeed()
     {
-        if (alive && rb.velocity.magnitude < 6f)
+        if (alive && (rb.velocity.magnitude < 6f || rb.velocity.magnitude > 6f))
         {
             rb.velocity = rb.velocity.normalized * 6f;
         }
@@ -84,7 +86,7 @@ public class BallManager : MonoBehaviour
     /// </summary>
     void FireBallAfterDie()
     {
-        if (!alive && rb.velocity.magnitude == 0 && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+        if (!alive && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
             alive = true;
             rb.velocity = new Vector2(Random.Range(-1f, 1f), 5);
@@ -108,14 +110,21 @@ public class BallManager : MonoBehaviour
                 BeMagnet();
                 PaddleManager.instance.SetPaddleNotMagnet();
             }
+
+            // Add change some velovity when paddle hit ball depend on where ball hit paddle
+            rb.velocity = rb.velocity + new Vector2((transform.position.x - paddle.gameObject.transform.position.x) * 3, 0);
+
             // if on magnet state and paddle hit ball, then magnet on
             if (onMagnet)
                 MagnetOn();
+
         }
+        //Add error value
         rb.velocity = new Vector2(rb.velocity.x + Random.Range(-0.1f, 0.1f), rb.velocity.y);
     }
 
     // Fire ball trigger anything except brick will bound
+    // and if paddle collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item")
@@ -126,6 +135,21 @@ public class BallManager : MonoBehaviour
         // if onfire ball hit paddle that has magnet, then magnet on
         if (other.gameObject.tag == "Paddle")
         {
+            PaddleManager paddle = GameObject.Find("Paddle").GetComponent<PaddleManager>();
+            if (paddle.GetPaddleFire())
+            {
+                BeFireball();
+                PaddleManager.instance.SetPaddleNotFire();
+            }
+            if (paddle.GetPaddleMagnet())
+            {
+                BeMagnet();
+                PaddleManager.instance.SetPaddleNotMagnet();
+            }
+
+            // Add change some velovity when paddle hit ball depend on where ball hit paddle
+            rb.velocity = rb.velocity + new Vector2((transform.position.x - paddle.gameObject.transform.position.x) * 3, 0);
+
             if (onMagnet)
                 MagnetOn();
         }
@@ -141,11 +165,13 @@ public class BallManager : MonoBehaviour
 
 
     /// <summary>
-    /// Start a coroutine called Fireball.
+    /// Stop before coroutine if it not null then start a coroutine called Fireball.
     /// </summary>
     public void BeFireball()
     {
-        StartCoroutine(Fireball());
+        if (onFireCoroutine != null)
+            StopCoroutine(onFireCoroutine);
+        onFireCoroutine = StartCoroutine(Fireball());
     }
 
     /// <summary>
@@ -169,11 +195,13 @@ public class BallManager : MonoBehaviour
 
 
     /// <summary>
-    /// Start a coroutine called Magnetball.
+    /// Stop before coroutine if it not null then start a coroutine called Magnetball.
     /// </summary>
     public void BeMagnet()
     {
-        StartCoroutine(Magnetball());
+        if (onMagnetCoroutine != null)
+            StopCoroutine(onMagnetCoroutine);
+        onMagnetCoroutine = StartCoroutine(Magnetball());
     }
 
     /// <summary>
