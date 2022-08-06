@@ -7,6 +7,7 @@ public class BallManager : MonoBehaviour
     bool alive = true;
     Rigidbody2D rb;
     GameObject paddle;
+    float startYPosiotion = -3.975f;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -49,7 +50,7 @@ public class BallManager : MonoBehaviour
             //Set ball speed to 0
             rb.velocity = Vector2.zero;
             //set ball on paddle
-            transform.position = new Vector3(paddle.transform.position.x, -3.975f, 0);
+            transform.position = new Vector3(paddle.transform.position.x, startYPosiotion, 0);
         }
     }
 
@@ -61,7 +62,7 @@ public class BallManager : MonoBehaviour
     {
         if (!alive)
         {
-            transform.position = new Vector3(paddle.transform.position.x, -3.975f, 0);
+            transform.position = new Vector3(paddle.transform.position.x, startYPosiotion, 0);
         }
     }
 

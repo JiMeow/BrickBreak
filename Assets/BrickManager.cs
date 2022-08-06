@@ -37,9 +37,11 @@ public class BrickManager : MonoBehaviour
             positionX = -4.5f * size;
             for (int j = 0; j < 10; j++)
             {
+                int index = i * 10 + j;
+
                 GameObject Instantbrick = Instantiate(brick, new Vector2(positionX, positionY), Quaternion.identity);
-                Instantbrick.GetComponent<Brick>().Set(i, true, false, false);
-                allInstantBricks[i * 10 + j] = Instantbrick;
+                Instantbrick.GetComponent<Brick>().Set(index, i, true, false, false);
+                allInstantBricks[index] = Instantbrick;
 
                 positionX += size;
             }
@@ -69,7 +71,7 @@ public class BrickManager : MonoBehaviour
         //set hard brick
         for (int i = 0; i < 5; i++)
         {
-            temp[i].GetComponent<Brick>().Set(0, false, true, false);
+            temp[i].GetComponent<Brick>().Set(-1, 0, false, true, false);
         }
 
         //Set undestroyable brick
@@ -86,7 +88,8 @@ public class BrickManager : MonoBehaviour
         //set undestroyable brick
         for (int i = 5; i < 8; i++)
         {
-            temp[i].GetComponent<Brick>().Set(0, false, false, true);
+            temp[i].GetComponent<Brick>().Set(-1, 0, false, false, true);
         }
+
     }
 }

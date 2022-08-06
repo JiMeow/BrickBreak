@@ -7,19 +7,24 @@ public class Brick : MonoBehaviour
 {
     int score;
     int durable;
+    int index;
 
     [SerializeField]
     Sprite[] sprite;
 
     /// <summary>
-    /// This function is used to set the brick's sprite, durability, and score
+    /// This function is used to set the brick's index, sprite, durability, and score
     /// </summary>
+    /// <param name="index">The index of the brick</param>
     /// <param name="row">the row the brick is in</param>
     /// <param name="isNormal">If true, the brick will be a normal brick.</param>
     /// <param name="isHardBrick">If true, the brick will be a hard brick.</param>
     /// <param name="isUndestroyable">If true, the brick will be undestroyable.</param>
-    public void Set(int row, bool isNormal, bool isHardBrick, bool isUndestroyable)
+    public void Set(int index, int row, bool isNormal, bool isHardBrick, bool isUndestroyable)
     {
+        if (index != -1)
+            this.index = index;
+
         if (isNormal)
         {
             durable = 1;
@@ -68,6 +73,16 @@ public class Brick : MonoBehaviour
                 }
             }
         }
+    }
+
+    public int GetIndex()
+    {
+        return index;
+    }
+
+    public int GetDurable()
+    {
+        return durable;
     }
 
 }
