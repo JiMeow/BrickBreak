@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class BallManager : MonoBehaviour
 {
-    bool alive = true;
+    public static BallManager instance;
     Rigidbody2D rb;
     GameObject paddle;
-    float startYPosiotion = -3.975f;
+    bool alive = true;
+    bool onFire = false;
+
+    private void Awake()
+    {
+        instance = this;
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -41,6 +47,7 @@ public class BallManager : MonoBehaviour
     /// </summary>
     void IsDie()
     {
+        float startYPosiotion = -3.975f;
         //when ball hit bottom
         if (transform.position.y < -5)
         {
@@ -62,6 +69,7 @@ public class BallManager : MonoBehaviour
     {
         if (!alive)
         {
+            float startYPosiotion = -3.975f;
             transform.position = new Vector3(paddle.transform.position.x, startYPosiotion, 0);
         }
     }
@@ -79,9 +87,60 @@ public class BallManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Start a coroutine called Fireball.
+    /// </summary>
+    public void BeFireball()
+    {
+        StartCoroutine(Fireball());
+    }
+
+    /// <summary>
+    /// "Turn on trigger and wait 15 seconds, then turn off the trigger."
+    /// on trigger mean ball on fire
+    /// </summary>
+    IEnumerator Fireball()
+    {
+        CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
+        onFire = true;
+        circleCollider.isTrigger = true;
+        yield return new WaitForSeconds(15f);
+        onFire = false;
+        circleCollider.isTrigger = false;
+    }
+
     // If collition was enter add some error rotation to the ball
+    // and if paddle collect fire item set ball to fire state
     private void OnCollisionEnter2D(Collision2D other)
     {
+        if (other.gameObject.tag == "Paddle")
+        {
+            if (GameObject.Find("Paddle").GetComponent<PaddleManager>().GetPaddleFire())
+            {
+                BeFireball();
+                PaddleManager.instance.SetPaddleNotFire();
+            }
+        }
         rb.velocity = new Vector2(rb.velocity.x + Random.Range(-0.1f, 0.1f), rb.velocity.y);
     }
+
+    // Fire ball trigger anythin except brick will bound
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item")
+        {
+            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
+            circleCollider.isTrigger = false;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item" && onFire)
+        {
+            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
+            circleCollider.isTrigger = true;
+        }
+    }
+
 }

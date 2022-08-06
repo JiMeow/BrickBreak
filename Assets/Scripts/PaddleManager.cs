@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class PaddleManager : MonoBehaviour
 {
+    public static PaddleManager instance;
+    bool paddleFire = false;
+    private void Awake()
+    {
+        instance = this;
+    }
     void Update()
     {
         //Game not over
@@ -33,5 +39,23 @@ public class PaddleManager : MonoBehaviour
         {
             transform.position = new Vector3(paddlenewPositionX, transform.position.y, transform.position.z);
         }
+    }
+
+    /// <summary>
+    /// set paddle to fire state
+    /// </summary>
+    public void SetPaddleFire()
+    {
+        paddleFire = true;
+    }
+
+    public bool GetPaddleFire()
+    {
+        return paddleFire;
+    }
+
+    public void SetPaddleNotFire()
+    {
+        paddleFire = false;
     }
 }

@@ -40,7 +40,7 @@ public class BrickManager : MonoBehaviour
                 int index = i * 10 + j;
 
                 GameObject Instantbrick = Instantiate(brick, new Vector2(positionX, positionY), Quaternion.identity);
-                Instantbrick.GetComponent<Brick>().Set(index, i, true, false, false);
+                Instantbrick.GetComponent<Brick>().Set(index, i, isNormal: true);
                 allInstantBricks[index] = Instantbrick;
 
                 positionX += size;
@@ -52,7 +52,8 @@ public class BrickManager : MonoBehaviour
     /// <summary>
     /// It randomly chooses 5 bricks from the first 5 rows of the brick wall, and sets them to be
     /// hard bricks. Then it randomly chooses 3 bricks from another brick, and sets them
-    /// to be undestroyable bricks
+    /// to be undestroyable bricks, then chooses 9 brick which isn't unbreakable and sets them to be
+    /// special brick contain item
     /// </summary>
     void SetSpecialBrick()
     {
@@ -71,7 +72,7 @@ public class BrickManager : MonoBehaviour
         //set hard brick
         for (int i = 0; i < 5; i++)
         {
-            temp[i].GetComponent<Brick>().Set(-1, 0, false, true, false);
+            temp[i].GetComponent<Brick>().Set(-1, 0, isHardBrick: true);
         }
 
         //Set undestroyable brick
@@ -88,8 +89,32 @@ public class BrickManager : MonoBehaviour
         //set undestroyable brick
         for (int i = 5; i < 8; i++)
         {
-            temp[i].GetComponent<Brick>().Set(-1, 0, false, false, true);
+            temp[i].GetComponent<Brick>().Set(-1, 0, isUndestroyable: true);
         }
 
+        //Set special brick contain item
+
+        //random 7 brick but not use unbreakable brick
+        //then shuffle random index to 7 first index in new array represent choose them be special brick contain item
+        for (int i = 0; i < 7; i++)
+        {
+            int indexToSwap = Random.Range(i, 70);
+            //if temp[indexToSwap] is unbreakable brick, then continue
+            if (temp[indexToSwap].GetComponent<Brick>().GetDurable() == -1)
+            {
+                i--;
+                continue;
+            }
+            {
+                GameObject swap = temp[i];
+                temp[i] = temp[indexToSwap];
+                temp[indexToSwap] = swap;
+            }
+        }
+        //set special brick contain item
+        for (int i = 0; i < 7; i++)
+        {
+            temp[i].GetComponent<Brick>().Set(-1, 0, isContainitem: true);
+        }
     }
 }

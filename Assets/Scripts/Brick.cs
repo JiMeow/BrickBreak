@@ -8,9 +8,13 @@ public class Brick : MonoBehaviour
     int score;
     int durable;
     int index;
+    bool containItem;
 
     [SerializeField]
     Sprite[] sprite;
+
+    [SerializeField]
+    GameObject[] itemGameObject;
 
     /// <summary>
     /// This function is used to set the brick's index, sprite, durability, and score
@@ -20,7 +24,7 @@ public class Brick : MonoBehaviour
     /// <param name="isNormal">If true, the brick will be a normal brick.</param>
     /// <param name="isHardBrick">If true, the brick will be a hard brick.</param>
     /// <param name="isUndestroyable">If true, the brick will be undestroyable.</param>
-    public void Set(int index, int row, bool isNormal, bool isHardBrick, bool isUndestroyable)
+    public void Set(int index, int row, bool isNormal = false, bool isHardBrick = false, bool isUndestroyable = false, bool isContainitem = false)
     {
         if (index != -1)
             this.index = index;
@@ -56,9 +60,14 @@ public class Brick : MonoBehaviour
             durable = -1;
             score = 0;
         }
+        if (isContainitem)
+        {
+            containItem = true;
+        }
     }
 
     //when ball hit brick decrease durability if durability is 0 destroy brick
+    //if brick contain item, then create item
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "Ball")
@@ -69,10 +78,38 @@ public class Brick : MonoBehaviour
                 if (durable == 0)
                 {
                     GameManager.instance.AddScore(score);
+                    if (containItem)
+                    {
+                        SpawnItem();
+                    }
                     Destroy(gameObject);
                 }
             }
         }
+    }
+
+    // destroy every brick in that fire ball was triggered
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Ball")
+        {
+            GameManager.instance.AddScore(score);
+            if (containItem)
+            {
+                SpawnItem();
+            }
+            Destroy(gameObject);
+        }
+    }
+
+    /// <summary>
+    /// It creates a random number between 0 and 2, then spawns a game object from the itemGameObject
+    /// array at the position of the brick that was destroy.
+    /// </summary>
+    void SpawnItem()
+    {
+        int itemNumber = Random.Range(0, 2);
+        GameObject item = Instantiate(itemGameObject[itemNumber], transform.position, Quaternion.identity);
     }
 
     public int GetIndex()

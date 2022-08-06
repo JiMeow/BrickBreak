@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ball
+  - Paddle
+  - Brick
+  - Border
+  - Item
   layers:
   - Default
   - TransparentFX
