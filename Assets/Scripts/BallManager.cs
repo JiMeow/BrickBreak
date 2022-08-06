@@ -93,8 +93,7 @@ public class BallManager : MonoBehaviour
         }
     }
 
-    // If collition was enter add some error rotation to the ball
-    // and if paddle collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
+    // If paddle collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "Paddle")
@@ -111,7 +110,7 @@ public class BallManager : MonoBehaviour
                 PaddleManager.instance.SetPaddleNotMagnet();
             }
 
-            // Add change some velovity when paddle hit ball depend on where ball hit paddle
+            // Add change some velocity when paddle hit ball depend on where ball hit paddle
             rb.velocity = rb.velocity + new Vector2((transform.position.x - paddle.gameObject.transform.position.x) * 4, 0);
 
             // if on magnet state and paddle hit ball, then magnet on
@@ -123,7 +122,7 @@ public class BallManager : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x + Random.Range(-0.1f, 0.1f), rb.velocity.y);
     }
 
-    // Fire ball bound anything except brick and item will bound
+    // Fire ball set trigger on when go out from paddle or border
     private void OnCollisionExit2D(Collision2D other)
     {
         if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item" && onFire)
@@ -133,7 +132,7 @@ public class BallManager : MonoBehaviour
         }
     }
 
-    // Fire ball trigger anything except brick and item will bound
+    // Fire ball trigger anything except brick and item will set trigger of for bound from it
     // and if paddle collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
     private void OnTriggerEnter2D(Collider2D other)
     {

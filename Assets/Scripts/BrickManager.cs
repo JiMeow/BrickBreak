@@ -285,6 +285,9 @@ public class BrickManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// return true if all the bricks are destroyed else false
+    /// </summary>
     public bool AllBlockWasDestroy()
     {
         for (int i = 0; i < 70; i++)

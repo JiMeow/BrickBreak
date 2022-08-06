@@ -14,6 +14,7 @@ public class RestartGame : MonoBehaviour
     }
 
     // If all the blocks are destroyed, the game is complete and the complete text is displayed
+    // press space or mouse1 to restart the game
     void Update()
     {
         if (BrickManager.instance.AllBlockWasDestroy())

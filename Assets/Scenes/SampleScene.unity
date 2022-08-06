@@ -418,7 +418,7 @@ MonoBehaviour:
   m_Text: 'GAMEOVER
 
 
-    PRESS  ''SPACE BAR'' TO RESTART'
+    PRESS  ''SPACEBAR'' TO RESTART'
 --- !u!222 &485209154
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2270,7 +2270,7 @@ MonoBehaviour:
   m_Text: 'COMPLETE
 
 
-    PRESS  ''SPACE BAR'' TO RESTART'
+    PRESS  ''SPACEBAR'' TO RESTART'
 --- !u!222 &1893850297
 CanvasRenderer:
   m_ObjectHideFlags: 0
