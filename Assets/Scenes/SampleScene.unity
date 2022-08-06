@@ -330,6 +330,7 @@ MonoBehaviour:
   scoreText: {fileID: 677422757}
   livesText: {fileID: 1622977429}
   startGameText: {fileID: 1569476813}
+  gameOverText: {fileID: 485209153}
 --- !u!1 &459686445
 GameObject:
   m_ObjectHideFlags: 0
