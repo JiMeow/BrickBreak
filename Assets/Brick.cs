@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Brick : MonoBehaviour
 {
@@ -9,17 +10,14 @@ public class Brick : MonoBehaviour
 
     [SerializeField]
     Sprite[] sprite;
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    /// <summary>
+    /// This function is used to set the brick's sprite, durability, and score
+    /// </summary>
+    /// <param name="row">the row the brick is in</param>
+    /// <param name="isNormal">If true, the brick will be a normal brick.</param>
+    /// <param name="isHardBrick">If true, the brick will be a hard brick.</param>
+    /// <param name="isUndestroyable">If true, the brick will be undestroyable.</param>
     public void Set(int row, bool isNormal, bool isHardBrick, bool isUndestroyable)
     {
         if (isNormal)
@@ -54,4 +52,22 @@ public class Brick : MonoBehaviour
             score = 0;
         }
     }
+
+    //when ball hit brick decrease durability if durability is 0 destroy brick
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Ball")
+        {
+            if (durable > 0)
+            {
+                durable--;
+                if (durable == 0)
+                {
+                    GameManager.instance.AddScore(score);
+                    Destroy(gameObject);
+                }
+            }
+        }
+    }
+
 }

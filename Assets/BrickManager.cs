@@ -16,11 +16,12 @@ public class BrickManager : MonoBehaviour
         SetSpecialBrick();
     }
 
-    void Update()
-    {
-
-    }
-
+    /// <summary>
+    /// "Spawns bricks in a grid pattern, with the top left brick being at (-9, 3.5) and the bottom
+    /// right brick being at (9, -3.5)."
+    /// 
+    /// The first for loop is for the rows, and the second for loop is for the columns
+    /// </summary>
     void Spawn()
     {
         // size is width of brick
@@ -46,6 +47,11 @@ public class BrickManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// It randomly chooses 5 bricks from the first 5 rows of the brick wall, and sets them to be
+    /// hard bricks. Then it randomly chooses 3 bricks from another brick, and sets them
+    /// to be undestroyable bricks
+    /// </summary>
     void SetSpecialBrick()
     {
         //Set hard brick
@@ -82,6 +88,5 @@ public class BrickManager : MonoBehaviour
         {
             temp[i].GetComponent<Brick>().Set(0, false, false, true);
         }
-
     }
 }
