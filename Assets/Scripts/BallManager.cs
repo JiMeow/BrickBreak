@@ -112,7 +112,7 @@ public class BallManager : MonoBehaviour
             }
 
             // Add change some velovity when paddle hit ball depend on where ball hit paddle
-            rb.velocity = rb.velocity + new Vector2((transform.position.x - paddle.gameObject.transform.position.x) * 3, 0);
+            rb.velocity = rb.velocity + new Vector2((transform.position.x - paddle.gameObject.transform.position.x) * 4, 0);
 
             // if on magnet state and paddle hit ball, then magnet on
             if (onMagnet)
@@ -123,7 +123,17 @@ public class BallManager : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x + Random.Range(-0.1f, 0.1f), rb.velocity.y);
     }
 
-    // Fire ball trigger anything except brick will bound
+    // Fire ball bound anything except brick and item will bound
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item" && onFire)
+        {
+            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
+            circleCollider.isTrigger = true;
+        }
+    }
+
+    // Fire ball trigger anything except brick and item will bound
     // and if paddle collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -148,15 +158,17 @@ public class BallManager : MonoBehaviour
             }
 
             // Add change some velovity when paddle hit ball depend on where ball hit paddle
-            rb.velocity = rb.velocity + new Vector2((transform.position.x - paddle.gameObject.transform.position.x) * 3, 0);
+            rb.velocity = rb.velocity + new Vector2((transform.position.x - paddle.gameObject.transform.position.x) * 4, 0);
 
             if (onMagnet)
                 MagnetOn();
         }
     }
-    private void OnCollisionExit2D(Collision2D other)
+
+    // Fire ball set trigger on when go out from paddle or border
+    private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item" && onFire)
+        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item")
         {
             CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
             circleCollider.isTrigger = true;
@@ -187,10 +199,10 @@ public class BallManager : MonoBehaviour
         circleCollider.isTrigger = true;
         //wait 15 seconds
         yield return new WaitForSeconds(timeToOnFireByItem);
-        onFire = false;
-        circleCollider.isTrigger = false;
         //set sprite to normal
         GetComponent<SpriteRenderer>().sprite = sprite[0];
+        onFire = false;
+        circleCollider.isTrigger = false;
     }
 
 
