@@ -6,6 +6,7 @@ public class ItemEffect : MonoBehaviour
 {
     void Update()
     {
+        Fall();
         Die();
     }
     private void OnTriggerEnter2D(Collider2D other)
@@ -41,5 +42,10 @@ public class ItemEffect : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    void Fall()
+    {
+        transform.position += Vector3.down * Time.deltaTime * 4f;
     }
 }

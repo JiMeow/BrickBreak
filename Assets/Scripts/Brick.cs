@@ -113,7 +113,9 @@ public class Brick : MonoBehaviour
     void SpawnItem()
     {
         int itemNumber = Random.Range(0, 2);
-        GameObject item = Instantiate(itemGameObject[itemNumber], transform.position, Quaternion.identity);
+        Vector3 itemPosition = transform.position;
+        itemPosition.z = itemPosition.z - 1f;
+        GameObject item = Instantiate(itemGameObject[itemNumber], itemPosition, Quaternion.identity);
     }
 
     public int GetIndex()
