@@ -284,4 +284,16 @@ public class BrickManager : MonoBehaviour
             }
         }
     }
+
+    public bool AllBlockWasDestroy()
+    {
+        for (int i = 0; i < 70; i++)
+        {
+            if (allInstantBricks[i] != null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 }

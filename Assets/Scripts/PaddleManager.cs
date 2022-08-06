@@ -44,31 +44,45 @@ public class PaddleManager : MonoBehaviour
     }
 
     /// <summary>
-    /// set paddle to fire state
+    /// This function sets the paddleFire variable to true.
     /// </summary>
     public void SetPaddleFire()
     {
         paddleFire = true;
     }
-
+    /// <summary>
+    /// This function sets the paddleFire variable to false.
+    /// <summary>
     public void SetPaddleNotFire()
     {
         paddleFire = false;
     }
-
+    /// <summary>
+    /// This function returns the value of the paddleFire variable.
+    /// </summary>
     public bool GetPaddleFire()
     {
         return paddleFire;
     }
 
+
+    /// <summary>
+    /// This function sets the paddleMagnet boolean to true
+    /// </summary>
     public void SetPaddleMagnet()
     {
         paddleMagnet = true;
     }
+    /// <summary>
+    /// This function sets the paddleMagnet variable to false
+    /// </summary>
     public void SetPaddleNotMagnet()
     {
         paddleMagnet = false;
     }
+    /// <summary>
+    /// This function returns the value of the paddleMagnet variable
+    /// </summary>
     public bool GetPaddleMagnet()
     {
         return paddleMagnet;
