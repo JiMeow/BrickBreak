@@ -13,10 +13,13 @@ public class GameManager : MonoBehaviour
     Text livesText;
     [SerializeField]
     Text startGameText;
+    [SerializeField]
+    Text gameOverText;
     private void Awake()
     {
         instance = this;
         Time.timeScale = 0;
+        gameOverText.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -24,7 +27,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             //Start game
-            if (livesText.text == "Live: 0")
+            if (livesText.text == "LIVE: 0")
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
@@ -63,10 +66,11 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// This function stops the game from running
+    /// This function stops the game from running and shows the game over text
     /// </summary>
     void GameOver()
     {
         Time.timeScale = 0;
+        gameOverText.gameObject.SetActive(true);
     }
 }

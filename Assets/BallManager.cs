@@ -12,11 +12,12 @@ public class BallManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         paddle = GameObject.Find("Paddle");
         //Set ball speed
-        rb.velocity = new Vector2(Random.Range(-1f, 1f), -5);
+        rb.velocity = new Vector2(Random.Range(-1f, 1f), 5);
     }
 
     void Update()
     {
+        FireBallAfterDie();
         FollowPaddle();
         IsDie();
         CheckSpeed();
@@ -43,7 +44,7 @@ public class BallManager : MonoBehaviour
         if (transform.position.y < -5)
         {
             alive = false;
-
+            GameManager.instance.RemoveLives();
 
             //Set ball speed to 0
             rb.velocity = Vector2.zero;
@@ -73,7 +74,7 @@ public class BallManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
         {
             alive = true;
-            rb.velocity = new Vector2(Random.Range(-1f, 1f), -5);
+            rb.velocity = new Vector2(Random.Range(-1f, 1f), 5);
         }
     }
 
