@@ -9,6 +9,10 @@ public class Brick : MonoBehaviour
     int durable;
     int index;
     bool containItem;
+    public int hardBrickBreakDurable = 3;
+    public int brickBlueScore = 10;
+    public int brickGreenScore = 20;
+    public int brickYellowScore = 50;
 
     [SerializeField]
     Sprite[] sprite;
@@ -35,22 +39,22 @@ public class Brick : MonoBehaviour
             if (row < 2)
             {
                 GetComponent<SpriteRenderer>().sprite = sprite[2];
-                score = 50;
+                score = brickYellowScore;
             }
             else if (row < 5)
             {
                 GetComponent<SpriteRenderer>().sprite = sprite[1];
-                score = 20;
+                score = brickGreenScore;
             }
             else if (row < 7)
             {
                 GetComponent<SpriteRenderer>().sprite = sprite[0];
-                score = 10;
+                score = brickBlueScore;
             }
         }
         if (isHardBrick)
         {
-            durable = 3;
+            durable = hardBrickBreakDurable;
             GetComponent<SpriteRenderer>().sprite = sprite[3];
             score = 100;
         }

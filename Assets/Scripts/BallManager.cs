@@ -5,11 +5,13 @@ using UnityEngine;
 public class BallManager : MonoBehaviour
 {
     public static BallManager instance;
+    [SerializeField]
+    Sprite[] sprite;
     Rigidbody2D rb;
     GameObject paddle;
     bool alive = true;
+    public float timeToOnFireByItem = 15f;
     bool onFire = false;
-
     private void Awake()
     {
         instance = this;
@@ -96,17 +98,22 @@ public class BallManager : MonoBehaviour
     }
 
     /// <summary>
-    /// "Turn on trigger and wait 15 seconds, then turn off the trigger."
+    /// "Turn on trigger change ball sprite and wait 15 seconds, then turn off the trigger."
     /// on trigger mean ball on fire
     /// </summary>
     IEnumerator Fireball()
     {
+        //set sprite to fireball
         CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
+        GetComponent<SpriteRenderer>().sprite = sprite[1];
         onFire = true;
         circleCollider.isTrigger = true;
-        yield return new WaitForSeconds(15f);
+        //wait 15 seconds
+        yield return new WaitForSeconds(timeToOnFireByItem);
         onFire = false;
         circleCollider.isTrigger = false;
+        //set sprite to normal
+        GetComponent<SpriteRenderer>().sprite = sprite[0];
     }
 
     // If collition was enter add some error rotation to the ball
@@ -124,7 +131,7 @@ public class BallManager : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x + Random.Range(-0.1f, 0.1f), rb.velocity.y);
     }
 
-    // Fire ball trigger anythin except brick will bound
+    // Fire ball trigger anything except brick will bound
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item")
@@ -133,7 +140,6 @@ public class BallManager : MonoBehaviour
             circleCollider.isTrigger = false;
         }
     }
-
     private void OnCollisionExit2D(Collision2D other)
     {
         if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item" && onFire)
@@ -142,5 +148,4 @@ public class BallManager : MonoBehaviour
             circleCollider.isTrigger = true;
         }
     }
-
 }
