@@ -30,8 +30,11 @@ public class BallManager : MonoBehaviour
 
     void Update()
     {
-        FireBallAfterDie();
+        // want to fire ball from paddle when ball stick with paddle
+        FireballThatStickwithPaddle();
+        // if dead, ball will stick with paddle
         FollowPaddle();
+        // if the ball dead, reset the ball
         IsDie();
         CheckSpeed();
     }
@@ -82,9 +85,9 @@ public class BallManager : MonoBehaviour
 
     /// <summary>
     /// If the player presses the spacebar or left mouse button, the ball is set to alive and is given a
-    /// random velocity
+    /// random velocity and a random angle
     /// </summary>
-    void FireBallAfterDie()
+    void FireballThatStickwithPaddle()
     {
         if (!alive && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
@@ -93,7 +96,7 @@ public class BallManager : MonoBehaviour
         }
     }
 
-    // If paddle collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
+    // If ball collide with paddle taht collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "Paddle")
@@ -102,11 +105,13 @@ public class BallManager : MonoBehaviour
             if (paddle.GetPaddleFire())
             {
                 BeFireball();
+                //reset paddle fire to false
                 PaddleManager.instance.SetPaddleNotFire();
             }
             if (paddle.GetPaddleMagnet())
             {
                 BeMagnet();
+                //reset paddle magnet to false
                 PaddleManager.instance.SetPaddleNotMagnet();
             }
 
@@ -118,14 +123,14 @@ public class BallManager : MonoBehaviour
                 MagnetOn();
 
         }
-        //Add error value
+        //Add error value every time ball collide something make ball not stuck for long
         rb.velocity = new Vector2(rb.velocity.x + Random.Range(-0.1f, 0.1f), rb.velocity.y);
     }
 
     // Fire ball set trigger on when go out from paddle or border
     private void OnCollisionExit2D(Collision2D other)
     {
-        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item" && onFire)
+        if ((other.gameObject.tag == "Paddle" || other.gameObject.tag == "Border") && onFire)
         {
             CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
             circleCollider.isTrigger = true;
@@ -136,12 +141,13 @@ public class BallManager : MonoBehaviour
     // and if paddle collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item")
+        if (other.gameObject.tag == "Paddle" || other.gameObject.tag == "Border")
         {
             CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
             circleCollider.isTrigger = false;
         }
         // if onfire ball hit paddle that has magnet, then magnet on
+        // if onfire ball hit paddle that has fire, then fire on again
         if (other.gameObject.tag == "Paddle")
         {
             PaddleManager paddle = GameObject.Find("Paddle").GetComponent<PaddleManager>();
@@ -167,7 +173,7 @@ public class BallManager : MonoBehaviour
     // Fire ball set trigger on when go out from paddle or border
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.gameObject.tag != "Brick" && other.gameObject.tag != "Item")
+        if (other.gameObject.tag == "Paddle" || other.gameObject.tag == "Border")
         {
             CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
             circleCollider.isTrigger = true;
@@ -192,16 +198,20 @@ public class BallManager : MonoBehaviour
     IEnumerator Fireball()
     {
         //set sprite to fireball
-        CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
         GetComponent<SpriteRenderer>().sprite = sprite[1];
-        onFire = true;
+        //set trigger on
+        CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
         circleCollider.isTrigger = true;
+        //set ball fire state to true
+        onFire = true;
         //wait 15 seconds
         yield return new WaitForSeconds(timeToOnFireByItem);
         //set sprite to normal
         GetComponent<SpriteRenderer>().sprite = sprite[0];
-        onFire = false;
+        //set trigger off
         circleCollider.isTrigger = false;
+        //set ball fire state to false
+        onFire = false;
     }
 
 
@@ -221,15 +231,17 @@ public class BallManager : MonoBehaviour
 
     IEnumerator Magnetball()
     {
+        //set ball magnet state to true
         onMagnet = true;
         //wait 15 seconds
         yield return new WaitForSeconds(timeToOnMagnetByItem);
+        //set ball magnet state to false
         onMagnet = false;
     }
 
     /// <summary>
     /// The MagnetOn function sets the ball's velocity to zero, and sets the ball's position to the
-    /// paddle's position
+    /// paddle's position (like when ball died but not decrease live).
     /// </summary>
     void MagnetOn()
     {

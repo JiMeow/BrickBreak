@@ -57,7 +57,8 @@ public class BrickManager : MonoBehaviour
     /// It randomly chooses 5 bricks from the first 5 rows of the brick wall, and sets them to be
     /// hard bricks. Then it randomly chooses 3 bricks from another brick, and sets them
     /// to be undestroyable bricks, then chooses 9 brick which isn't unbreakable and sets them to be
-    /// special brick contain item
+    /// special brick contain item and sort the bricks index in the array (make allInstantBricks be like before set special brick)
+    /// then set 4 random bricks to be bomb bricks. (need sort before because use index to set bomb)
     /// </summary>
     void SetSpecialBrick()
     {
@@ -103,7 +104,7 @@ public class BrickManager : MonoBehaviour
         for (int i = 0; i < 7; i++)
         {
             int indexToSwap = Random.Range(i, 70);
-            //if temp[indexToSwap] is unbreakable brick, then continue
+            //if temp[indexToSwap] is unbreakable brick, then recheck
             if (temp[indexToSwap].GetComponent<Brick>().GetDurable() == -1)
             {
                 i--;
@@ -121,24 +122,6 @@ public class BrickManager : MonoBehaviour
             temp[i].GetComponent<Brick>().Set(-1, 0, isContainitem: true);
         }
 
-        //Spawn 4 bomb brick by random and set index that can't be use in dictionary (can't be unbreakable box)
-        //then set brick to Bombbrick
-        Dictionary<int, bool> indexBombCanUse = new Dictionary<int, bool>();
-        for (int i = 0; i < 4; i++)
-        {
-            int indexChoose = Random.Range(0, 70);
-            if (indexBombCanUse.ContainsKey(indexChoose) || temp[indexChoose].GetComponent<Brick>().GetDurable() == -1)
-            {
-                i--;
-                continue;
-            }
-            else
-            {
-                SetBombBrickCantUseIndex(indexChoose, indexBombCanUse);
-                temp[indexChoose].GetComponent<Brick>().Set(-1, 0, isBombBrick: true);
-            }
-        }
-
         //Sort all brick by index
         for (int i = 0; i < 70; i++)
         {
@@ -152,11 +135,31 @@ public class BrickManager : MonoBehaviour
                 }
             }
         }
+
+        //Spawn 4 bomb brick by random and set index that can't be bomb in dictionary (can't be unbreakable box)
+        //then set brick to Bombbrick
+        Dictionary<int, bool> indexBombCanUse = new Dictionary<int, bool>();
+        for (int i = 0; i < 4; i++)
+        {
+            int indexChoose = Random.Range(0, 70);
+            // bomb brick must not be in the same diagonal line and not be unbreakable brick
+            if (indexBombCanUse.ContainsKey(indexChoose) || temp[indexChoose].GetComponent<Brick>().GetDurable() == -1)
+            {
+                i--;
+                continue;
+            }
+            else
+            {
+                SetBombBrickCantUseIndex(indexChoose, indexBombCanUse);
+                temp[indexChoose].GetComponent<Brick>().Set(-1, 0, isBombBrick: true);
+            }
+        }
+
     }
 
     /// <summary>
-    /// It takes an index and a dictionary of indices and sets the value of the dictionary at the index
-    /// to true
+    /// It takes an index and a dictionary of indices and sets the value of the dictionary 
+    /// of diagonals at the index to be true
     /// </summary>
     /// <param name="index">the index of the brick that is being destroyed</param>
     /// <param name="indexBombCanUse">a dictionary that stores the index on right(\) and on left(/) of the brick that can't be used
@@ -170,8 +173,10 @@ public class BrickManager : MonoBehaviour
             {
                 indexBombCanUse.Add(tempindex, true);
             }
+            //next loop index will out of bound so break
             if (tempindex % 10 == 0)
                 break;
+            //go to top left
             tempindex -= 11;
         }
         tempindex = index;
@@ -181,8 +186,10 @@ public class BrickManager : MonoBehaviour
             {
                 indexBombCanUse.Add(tempindex, true);
             }
+            //next loop index will out of bound so break
             if (tempindex % 10 == 9)
                 break;
+            //go to top right
             tempindex -= 9;
         }
         tempindex = index;
@@ -192,8 +199,10 @@ public class BrickManager : MonoBehaviour
             {
                 indexBombCanUse.Add(tempindex, true);
             }
+            //next loop index will out of bound so break
             if (tempindex % 10 == 9)
                 break;
+            //go to bottom right
             tempindex += 11;
         }
         tempindex = index;
@@ -203,8 +212,10 @@ public class BrickManager : MonoBehaviour
             {
                 indexBombCanUse.Add(tempindex, true);
             }
+            //next loop index will out of bound so break
             if (tempindex % 10 == 0)
                 break;
+            //go to bottom left
             tempindex += 9;
         }
     }
@@ -216,6 +227,7 @@ public class BrickManager : MonoBehaviour
     /// <param name="index">the index of the brick that was hit by the ball</param>
     public void DestroyByBombBrick(int index)
     {
+        //set tempindex to original index of bomb brick
         int tempindex = index;
         bool direction = Random.Range(0, 2) == 0 ? true : false;
 
@@ -223,25 +235,30 @@ public class BrickManager : MonoBehaviour
         {
             while (true)
             {
-                // hanedle index out of range
+                // index will out of bound so break
                 if (tempindex % 10 == 0)
                     break;
+                // go to top left
                 tempindex -= 11;
+                // if index is out of bound then break
                 if (tempindex < 0) break;
 
-                //destroy brick if it not already destroyed
+                // destroy brick if it not already destroyed
                 if (allInstantBricks[tempindex] != null)
                 {
                     allInstantBricks[tempindex].GetComponent<Brick>().DestroyBrick();
                 }
             }
+            //set tempindex to original index of bomb brick
             tempindex = index;
             while (true)
             {
-                // hanedle index out of range
+                // index will out of bound so break
                 if (tempindex % 10 == 9)
                     break;
+                // go to bottom right
                 tempindex += 11;
+                // if index is out of bound then break
                 if (tempindex >= 70) break;
 
                 //destroy brick if it not already destroyed
@@ -255,10 +272,12 @@ public class BrickManager : MonoBehaviour
         {
             while (true)
             {
-                // hanedle index out of range
+                // index will out of bound so break
                 if (tempindex % 10 == 9)
                     break;
+                // go to top right
                 tempindex -= 9;
+                // if index is out of bound then break
                 if (tempindex < 0) break;
 
                 //destroy brick if it not already destroyed
@@ -267,13 +286,16 @@ public class BrickManager : MonoBehaviour
                     allInstantBricks[tempindex].GetComponent<Brick>().DestroyBrick();
                 }
             }
+            //set tempindex to original index of bomb brick
             tempindex = index;
             while (true)
             {
-                // hanedle index out of range
+                // index will out of bound so break
                 if (tempindex % 10 == 0)
                     break;
+                // go to bottom left
                 tempindex += 9;
+                // if index is out of bound then break
                 if (tempindex >= 70) break;
 
                 //destroy brick if it not already destroyed

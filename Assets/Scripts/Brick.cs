@@ -134,16 +134,25 @@ public class Brick : MonoBehaviour
         GameObject item = Instantiate(itemGameObject[itemNumber], itemPosition, Quaternion.identity);
     }
 
+    /// <summary>
+    /// This function is used to get the brick's index
+    /// </summary>
     public int GetIndex()
     {
         return index;
     }
 
+    /// <summary>
+    /// This function is used to get the brick's durability
+    /// </summary>
     public int GetDurable()
     {
         return durable;
     }
 
+    /// <summary>
+    /// This function is used to get the brick's score
+    /// </summary>
     public bool GetIsBomb()
     {
         return isBomb;

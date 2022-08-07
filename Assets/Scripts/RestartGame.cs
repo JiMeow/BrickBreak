@@ -13,7 +13,7 @@ public class RestartGame : MonoBehaviour
         completeText.gameObject.SetActive(false);
     }
 
-    // If all the blocks are destroyed, the game is complete and the complete text is displayed
+    // If all the blocks are destroyed, the game is complete pause the game and the complete text is displayed
     // press space or mouse1 to restart the game
     void Update()
     {

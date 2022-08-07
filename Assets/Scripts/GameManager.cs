@@ -26,12 +26,12 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            //Start game
+            //Die then restart game
             if (livesText.text == "LIVE: 0")
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
-            //Restart game
+            //Start game
             else
             {
                 Time.timeScale = 1;
