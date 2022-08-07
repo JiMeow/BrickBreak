@@ -21,12 +21,13 @@ public class PaddleManager : MonoBehaviour
     }
 
     /// <summary>
-    /// The function takes the mouse positionX and converts it to a value between -8.35 and 8.35
+    /// The function takes the mouse positionX and converts it to a value between -8.35 and 8.35 (border of game screen)
     /// </summary>
     void SetPaddlePos()
     {
         //track mouse position
         Vector3 mousePosition = Input.mousePosition;
+        //convert mouse position to world position
         float paddlenewPositionX = mousePosition.x / Screen.width * 16 - 8;
         if (paddlenewPositionX >= 8.35)
         {

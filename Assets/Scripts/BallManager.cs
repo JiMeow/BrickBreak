@@ -30,7 +30,7 @@ public class BallManager : MonoBehaviour
 
     void Update()
     {
-        // want to fire ball from paddle when ball stick with paddle
+        // fire ball from paddle when ball stick with paddle
         FireballThatStickwithPaddle();
         // if dead, ball will stick with paddle
         FollowPaddle();
@@ -127,16 +127,6 @@ public class BallManager : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x + Random.Range(-0.1f, 0.1f), rb.velocity.y);
     }
 
-    // Fire ball set trigger on when go out from paddle or border
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        if ((other.gameObject.tag == "Paddle" || other.gameObject.tag == "Border") && onFire)
-        {
-            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
-            circleCollider.isTrigger = true;
-        }
-    }
-
     // Fire ball trigger anything except brick and item will set trigger of for bound from it
     // and if paddle collect fire item set ball to fire state or if paddle collect magnet item set ball to magnet state
     private void OnTriggerEnter2D(Collider2D other)
@@ -167,6 +157,16 @@ public class BallManager : MonoBehaviour
 
             if (onMagnet)
                 MagnetOn();
+        }
+    }
+
+    // Fire ball set trigger on when go out from paddle or border
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if ((other.gameObject.tag == "Paddle" || other.gameObject.tag == "Border") && onFire)
+        {
+            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
+            circleCollider.isTrigger = true;
         }
     }
 
